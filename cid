@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Change a user ID on a Mac
+# Used so that we can match IDs accross machines
+# Methodology taken from
+#       https://www.inteller.net/notes/change-user-id-on-snow-leopard
+# bpmelli 8/29/17
+
+function show_help() {
+    echo "Usage: changeId -u <user> -n <new id>"
+}
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root (or sudo)"
+    exit 1
+fi
+
+# Parse command line arguments
+
+OPTIND=1
+
+user=""
+new_id=""
+
+while getopts "u:n:" opt; do
+    case "$opt" in
+	h|\?)
+	    show_help
+	    exit 0
+	    ;;
+	u) user=$OPTARG
+	   ;;
+	n) new_id=$OPTARG
+	   ;;
+    esac
+done
+
+shift $((OPTIND-1))
+[ "$1" = "--" ] && shift
+
+if [ -z "$user" ]; then
+    echo "-u option is required"
+    show_help
+    exit 1
+fi
+
+if [ -z "$new_id" ]; then
+    echo "-n otion is required"
+    show_help
+    exit 1
+fi
+
+# Make sure the user isn't logged in
+
+shells=`who | grep $user`
+if [ ! -z "$shells" ]; then
+    echo "Cannot proceed while user '$user' is logged in."
+    exit 1
+fi
+
+# Grab old user ID
+
+output=`dscl . -read /Users/$user UniqueID 2> /dev/null`
+
+re='^UniqueID: ([0-9]+)'
+
+if [[ "$output" =~ $re ]]; then
+    old_id=${BASH_REMATCH[1]}
+else
+    echo "User '$user' not found on this system"
+    exit 1	 
+fi
+
+# Make sure it isn't already in use
+
+output=`id -un $new_id 2> /dev/null`
+if [ $? -eq 0 ]; then
+    echo "Id $new_id already in use by $output"
+    exit 1
+fi
+
+echo "Changing user $user id from $old_id to $new_id"
+
+output=`dscl . -change /Users/$user UniqueID $old_id $new_id`
+
+# Change file ownership to the new id
+
+for dir in /Users/$user /Library /Applications /usr /private/var; do
+    find $dir -user $old_id -print0 | xargs -0 chown -h $new_id
+done
+
+echo "All done"
+exit 0
