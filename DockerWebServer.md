@@ -3,6 +3,9 @@
 There are several options to run a webserver on your Mac. One is [MAMP](https://www.mamp.info)
 In this document I'm recording the steps needed to run Apache with Docker
 
+Most of the info in this document comes from the excellent series of youtube videos by [Peter Fisher].
+(https://www.youtube.com/playlist?list=PLZdsdjcJ44WU_cY2Y1LFLnmsSjFD5BZLZ)
+
 ## Install Docker
 
 Installing docker on your mac is [documented here](https://docs.docker.com/docker-for-mac/install)
@@ -48,10 +51,11 @@ If things worked as expected, you are now root in a ubuntu container running on 
 
 ## Images vs. Containers
 
-I like to think about images and containers in term of object oriented <.....>
+I like to think about images and containers in term of object oriented terminology:
 An image is like a class, and a container is an instance of this class.
 
 You can get a list of **running** containers with `docker ps`
+Try it from a different terminal (not the one running your ubuntu container)
 
 ```
 mistral: docker ps
@@ -76,5 +80,21 @@ You could restart that container with `docker start 34a7a9bcfbf2`, and stop it a
 Finally, you can remove the container with `docker rm 34a7a9bcfbf2`
 
 You can remove an image with `docker rmi <image ID>`. For example `docker rmi f975c5035748` for my ubuntu image listed above.
+
+## Time to install Apache (or nginx, or ...)
+
+First, start the container you previously exited and get a prompt back. Let's assume its ID is 34a7a9bcfbf2
+
+```
+docker start 34a7a9bcfbf2
+docker exec -it 34a7a9bcfbf2 /bin/bash
+```
+
+That should get you back to your root prompt. Now we can install apache2.
+
+```
+apt_get update
+apt-get install apache2
+```
 
 
