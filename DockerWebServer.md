@@ -1,6 +1,7 @@
 # Running a web server on your Mac with docker
 
 There are several options to run a webserver on your Mac. One is [MAMP](https://www.mamp.info)
+
 In this document I'm recording the steps needed to run Apache with Docker
 
 Most of the info in this document comes from the excellent series of youtube videos by [Peter Fisher].
