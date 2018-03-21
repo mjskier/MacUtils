@@ -148,6 +148,8 @@ cat > index.html
 
 We are done with setup. All we need to do now is to run a container of the new image, with apache running
 
+**Warning** The following command is one line.
+
 `docker run -p 8080:80 --name web1 -h powder.local -v ~/web_stuff:/var/www/html  ubuntu_apache2 /usr/sbin/apache2ctl -D FOREGROUND`
 
 A few parameters of interest:
