@@ -69,7 +69,7 @@ Now exit from your ubuntu root shell (if you haven't already done so) and run `d
 The resulting list should be empty.
 
 The ubuntu container isn't running anymore, but it still exists on your machine.
-To get a list of containers, runningor not, use `docker ps -a`
+To get a list of containers, running or not, use `docker ps -a`
 
 ```
 mistral: docker ps -a
