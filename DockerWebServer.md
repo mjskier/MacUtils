@@ -96,5 +96,97 @@ That should get you back to your root prompt. Now we can install apache2.
 apt_get update
 apt-get install apache2
 ```
+The configuration for apache is under /etc/apache2. 
+By default it has a virtual host listening to port 80 with a document root at /var/www/html
+
+## Create a new image with the changes we have made so far
+
+Time to exit your container and commit the changes we have made to a new image. Make sure you do exit as saving a running dontainer can create problems.
+
+Get the container ID with `docker ps -a`. We can now commit the changes to a new image
+
+`docker commit 34a7a9bcfbf2 ubuntu_apache2`
+
+Get a list of images, you should now see the newly created ubuntu_apache2 (or whateveryou decide to call it)
+
+docker images
+
+```
+mistral: docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu_apache2      latest              4b5eefbe9c6c        2 hours ago         251MB
+ubuntu              latest              f975c5035748        2 weeks ago         112MB
+```
+## Decide where you want to edit your web content
+
+You could edit your web content in the container, but chances are you have better tools on your Mac. So let's decide where your document root will be on your machine, and map that to /var/www/html in the container.
+
+For this example, I will use ~/web_stuff
+
+```
+cd ~
+mkdir web_stuff
+cd web_stuff
+```
+Now you can use your favorite editor to create index.html. (No, /bin/cat isn't my favorite editor :-) )
+
+```
+cat > index.html
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>This is a page from inside my container</h1>
+
+    <p>This is a paragraph.</p>
+    <p>This is another paragraph.</p>
+
+  </body>
+</html>
+```
+
+## Start the new image, and map ports, volumes, ...
+
+We are done with setup. All we need to do now is to run a container of the new image, with apache running
+
+`docker run -p 8080:80 --name web1 -h powder.local -v ~/web_stuff:/var/www/html  ubuntu_apache2 /usr/sbin/apache2ctl -D FOREGROUND`
+
+A few parameters of interest:
+* -p8080:80
+This maps port 8080 on your mac to port 80 in your container.
+
+* -name web1
+This is the name of the container. Not necessary, but easier to deal with than a random number.
+
+* -h powder.local
+This is your hostname. I haven't investigated what it means to name your hosname yet, but that prevents a warning from apache.
+
+* -v ~/web_stuff:/var/www/html
+This "mounts" your ~/web_stuff directory on /var/www/html in your container. /var/www/html is configured as the document root for your apache server. So when we browse to localhost:8080 we should get out index.html page.
+
+* /usr/sbin/apache2ctl -D FOREGROUND
+This starts the apache2 service in the container. We won't get a prompt, so if you need to stop the containier do `docker stop web1`
+
+* no -ti
+
+Note that we didn't use the -t and -i options here. We don't want an interactive container that will exit as soon as the apache2ctl command is done.
+
+## Try it out
+
+Open your browser and go to [localhost:8080](localhost:8080). You should see the content of the index.html we created before.
+
+You should be able to edit the index.html file, then reload the page and see the changes.
+
+
+## Stop it
+
+Since we didn't run an interactive container, we can't stop it by exiting, or CTRL_C. 
+To stop the container we need to do this instead
+
+`docker stop web1`
+
+## restart it
+
+We unfortunately cannot restart the container with `docker restart` since the web server won't be started that way.
+So the simplest way to restart is to remove the old one `docker rm web1` (docker won't let you start a new container with the same name as an existing one) and use the `docker run` command again.
 
 
