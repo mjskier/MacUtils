@@ -102,7 +102,7 @@ By default it has a virtual host listening to port 80 with a document root at /v
 
 ## Create a new image with the changes we have made so far
 
-Time to exit your container and commit the changes we have made to a new image. Make sure you do exit as saving a running dontainer can create problems.
+Time to exit your container and commit the changes we have made to a new image. Make sure you do exit as saving a running container can create problems.
 
 Get the container ID with `docker ps -a`. We can now commit the changes to a new image
 
