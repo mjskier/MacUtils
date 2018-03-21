@@ -152,18 +152,23 @@ We are done with setup. All we need to do now is to run a container of the new i
 
 A few parameters of interest:
 * -p8080:80
+
 This maps port 8080 on your mac to port 80 in your container.
 
 * -name web1
+
 This is the name of the container. Not necessary, but easier to deal with than a random number.
 
 * -h powder.local
+
 This is your hostname. I haven't investigated what it means to name your hosname yet, but that prevents a warning from apache.
 
 * -v ~/web_stuff:/var/www/html
+
 This "mounts" your ~/web_stuff directory on /var/www/html in your container. /var/www/html is configured as the document root for your apache server. So when we browse to localhost:8080 we should get out index.html page.
 
 * /usr/sbin/apache2ctl -D FOREGROUND
+
 This starts the apache2 service in the container. We won't get a prompt, so if you need to stop the containier do `docker stop web1`
 
 * no -ti
