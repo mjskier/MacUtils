@@ -4,8 +4,7 @@ There are several options to run a webserver on your Mac. One is [MAMP](https://
 
 In this document I'm recording the steps needed to run Apache with Docker
 
-Most of the info in this document comes from the excellent series of youtube videos by [Peter Fisher].
-(https://www.youtube.com/playlist?list=PLZdsdjcJ44WU_cY2Y1LFLnmsSjFD5BZLZ)
+Most of the info in this document comes from the excellent series of youtube videos by [Peter Fisher](https://www.youtube.com/playlist?list=PLZdsdjcJ44WU_cY2Y1LFLnmsSjFD5BZLZ)
 
 ## Install Docker
 
